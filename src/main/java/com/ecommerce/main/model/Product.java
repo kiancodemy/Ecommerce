@@ -1,11 +1,11 @@
-package model;
+package com.ecommerce.main.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
+
 @Entity
 @Table(name="products")
 @NoArgsConstructor
@@ -16,17 +16,26 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
     @SequenceGenerator(name = "product_seq", sequenceName = "product_seq", allocationSize = 1)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String brand;
+
+    @Column(nullable = false)
     private BigDecimal price;
+
+    @Lob
+    private String description;
+
+    @Column(nullable = false)
     private int inventory;
 
     @ManyToOne
-    @JoinColumn(name="category-id",referencedColumnName = "id")
+    @JoinColumn(name="category_id", referencedColumnName = "id", nullable = false)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    Set<Image> images;
-
-
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images;
 }
