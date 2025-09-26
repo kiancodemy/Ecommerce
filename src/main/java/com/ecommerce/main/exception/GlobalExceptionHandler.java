@@ -1,4 +1,6 @@
 package com.ecommerce.main.exception;
+import com.ecommerce.main.exception.errors.AlreadyExist;
+import com.ecommerce.main.exception.errors.CategoryNotFound;
 import com.ecommerce.main.exception.errors.ProductNotFound;
 import com.ecommerce.main.exception.errors.UserNotFoundException;
 import com.ecommerce.main.reposnse.ApiResponse;
@@ -8,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -36,6 +36,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
+    @ExceptionHandler(AlreadyExist.class)
+    public ResponseEntity<ApiResponse> handleUserNotFound(
+            AlreadyExist ex,
+            HttpServletRequest request) {
+
+        ApiResponse apiError=new ApiResponse(ex.getMessage(),null);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiError);
+    }
+
     @ExceptionHandler(ProductNotFound.class)
     public ResponseEntity<ApiResponse> handleUserNotFound(
            ProductNotFound ex,
@@ -44,6 +53,17 @@ public class GlobalExceptionHandler {
         ApiResponse apiError=new ApiResponse(ex.getMessage(),null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
+
+
+    @ExceptionHandler(CategoryNotFound.class)
+    public ResponseEntity<ApiResponse> handleUserNotFound(
+            CategoryNotFound ex,
+            HttpServletRequest request) {
+
+        ApiResponse apiError=new ApiResponse(ex.getMessage(),null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
+
 
 
     //handle other Errors

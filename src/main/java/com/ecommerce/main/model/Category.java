@@ -20,5 +20,7 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Product> products;
 
-
+    public Category(String name) {
+        this.name = name;
+    }
 }
