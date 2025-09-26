@@ -1,13 +1,10 @@
-package model;
+package com.ecommerce.main.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.Set;
-
 @Entity
-@Table(name="categories")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -16,8 +13,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
     @SequenceGenerator(name = "category_seq", sequenceName = "category_seq", allocationSize = 1)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Product> products;
 
 

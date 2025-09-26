@@ -1,8 +1,9 @@
-package model;
+package com.ecommerce.main.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.sql.Blob;
 
 @Entity
 @Table(name="images")
@@ -15,7 +16,20 @@ public class Image {
     @SequenceGenerator(name = "image_seq", sequenceName = "image_seq", allocationSize = 1)
     private Long id;
 
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private String fileType;
+
+    @Column(nullable = false)
+    private String downloadedUrl;
+
+    @Lob
+    @Column(nullable = false)
+    private Blob image;
+
     @ManyToOne
-    @JoinColumn(name="product-id")
+    @JoinColumn(name="product-id",nullable = false)
     private Product product;
 }
