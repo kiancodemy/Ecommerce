@@ -1,5 +1,5 @@
 package com.ecommerce.main.service.product;
-import com.ecommerce.main.dto.ProductDto;
+import com.ecommerce.main.dto.addProductDto;
 import com.ecommerce.main.exception.errors.ProductNotFound;
 import com.ecommerce.main.model.Product;
 import com.ecommerce.main.repository.ProductRepository;
@@ -12,8 +12,14 @@ public class productServiceImpl implements productService {
     private final ProductRepository productRepository;
 
     @Override
-    public Product createProduct(ProductDto productDto) {
-        return null;
+    public Product createProduct(addProductDto addProductDto) {
+        Product newProduct=new Product();
+        newProduct.setBrand(addProductDto.brand());
+        newProduct.setName(addProductDto.name());
+        newProduct.setDescription(addProductDto.description());
+        newProduct.setInventory(addProductDto.inventory());
+        return productRepository.save(newProduct);
+
     }
 
     @Override
@@ -28,8 +34,13 @@ public class productServiceImpl implements productService {
     }
 
     @Override
-    public Product updateProduct(Long id, ProductDto productDto) {
-        return null;
+    public Product updateProduct(Long id, addProductDto addProductDto) {
+        Product find=productRepository.findById(id).orElseThrow(()->new ProductNotFound("Username not found"));
+        find.setName(addProductDto.name());
+        find.setDescription(addProductDto.description());
+        find.setInventory(addProductDto.inventory());
+        find.setBrand(addProductDto.brand());
+        return productRepository.save(find);
     }
 
     @Override
@@ -44,7 +55,7 @@ public class productServiceImpl implements productService {
 
     @Override
     public Product getProductByName(String name) {
-        return productRepository.findByName(name);
+        return productRepository.findByName(name).orElseThrow(()->new ProductNotFound("Username not found"));
     }
 
 }
