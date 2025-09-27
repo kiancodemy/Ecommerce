@@ -33,7 +33,7 @@ public class Product {
     private int inventory;
 
     @ManyToOne
-    @JoinColumn(name="category_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name="category_id", referencedColumnName = "id",nullable = false)
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

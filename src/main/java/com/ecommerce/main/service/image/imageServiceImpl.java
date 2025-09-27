@@ -1,25 +1,35 @@
 package com.ecommerce.main.service.image;
+import com.ecommerce.main.dto.ImageDto;
+import com.ecommerce.main.exception.errors.FileStorageException;
+import com.ecommerce.main.exception.errors.ProductNotFound;
 import com.ecommerce.main.model.Image;
+import com.ecommerce.main.model.Product;
 import com.ecommerce.main.repository.ImageRepository;
+import com.ecommerce.main.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
 
 public class imageServiceImpl implements imageService {
-    private ImageRepository iimageRepository;
 
     private final ImageRepository imageRepository;
+    private final ProductRepository productRepository;
     @Override
     public void deleteById(Long id) {
+        imageRepository.deleteById(id);
 
     }
 
     @Override
     public Image getImageById(Long id) {
-        return null;
+        return imageRepository.findById(id).orElseThrow(()->new ProductNotFound("Image not found"));
     }
 
     @Override
@@ -28,20 +38,35 @@ public class imageServiceImpl implements imageService {
     }
 
     @Override
-    public Image saveImage(MultipartFile multipartFile, Long productId) {
-        return null;
+    @Transactional
+    public List<ImageDto> saveImage(List<MultipartFile> files, Long productId) {
+        Product findProduct = productRepository.findById(productId).orElseThrow(() -> new ProductNotFound("product not found"));
+       return createNewImages(files, findProduct);}
+
+
+
+
+    public List<ImageDto> createNewImages (List<MultipartFile> files,Product findProduct ){
+        String base_Url = "/api/images/download/";
+        List<ImageDto> imageDto =new ArrayList<>();
+        for (MultipartFile file : files) {
+            try {
+                Image img = new Image();
+                img.setName(file.getOriginalFilename());
+                img.setFileType(file.getContentType());
+                img.setImage(file.getBytes());
+                img.setProduct(findProduct);
+                Image saved = imageRepository.save(img);
+                String downloadUrl = base_Url + saved.getId();
+                saved.setDownloadedUrl(downloadUrl);
+                imageRepository.save(saved);
+                ImageDto newImage=new ImageDto(img.getId(),img.getName(),img.getDownloadedUrl());
+                imageDto.add(newImage);
+
+            } catch (IOException e ) {
+                throw new FileStorageException("Failed to store file: " + file.getOriginalFilename());
+            }}
+        return imageDto;
     }
 
-    @Override
-    public Image updateImage(MultipartFile multipartFile, Long imageId) {
-        return null;
-    }
-
-    @Override
-    public void deleteImageById(Long id) {
-        imageRepository.deleteById(id);
-
-
-
-    }
 }

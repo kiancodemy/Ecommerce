@@ -1,15 +1,16 @@
 package com.ecommerce.main.exception;
-import com.ecommerce.main.exception.errors.AlreadyExist;
-import com.ecommerce.main.exception.errors.CategoryNotFound;
-import com.ecommerce.main.exception.errors.ProductNotFound;
-import com.ecommerce.main.exception.errors.UserNotFoundException;
+import com.ecommerce.main.exception.errors.*;
 import com.ecommerce.main.reposnse.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,13 +18,12 @@ public class GlobalExceptionHandler {
     // Handle validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult()
+        List<String> errorMessage = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .findFirst()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage()).orElse("invalid request!!!");
+                .map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
 
-        ApiResponse response = new ApiResponse(errorMessage ,null);
+        ApiResponse response = new ApiResponse("failed",errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
     
@@ -54,6 +54,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<ApiResponse> handleUserNotFound(
+            FileStorageException  ex,
+            HttpServletRequest request) {
+
+        ApiResponse apiError=new ApiResponse(ex.getMessage(),null);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
+    }
+
+
 
     @ExceptionHandler(CategoryNotFound.class)
     public ResponseEntity<ApiResponse> handleUserNotFound(
@@ -69,7 +79,7 @@ public class GlobalExceptionHandler {
     //handle other Errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
-        ApiResponse response = new ApiResponse( ex.getMessage(), null);
+        ApiResponse response = new ApiResponse( "internal error", null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

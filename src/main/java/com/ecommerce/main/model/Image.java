@@ -1,9 +1,10 @@
 package com.ecommerce.main.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.sql.Blob;
+
 
 @Entity
 @Table(name="images")
@@ -27,9 +28,10 @@ public class Image {
 
     @Lob
     @Column(nullable = false)
-    private Blob image;
+    private byte[] image;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="product-id",nullable = false)
     private Product product;
 }

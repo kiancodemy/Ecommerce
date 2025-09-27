@@ -5,9 +5,14 @@ import java.util.List;
 
 public interface productService {
     Product createProduct(addProductDto addProductDto);
+
     List<Product> getAllProducts();
+
     void deleteProduct(Long id);
+
     Product updateProduct(Long id, addProductDto addProductDto);
+
     List<Product> getProductsByCategoryId(Long id);
+
     Product getProductById(Long id);
-    Product getProductByName(String name);}
+}

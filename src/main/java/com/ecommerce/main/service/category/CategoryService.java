@@ -7,7 +7,6 @@ public interface CategoryService {
     List<Category> allCategory();
     void deleteById(Long id);
     Category findCategoryById(Long id);
-    Category findByCategoryName(String categoryName);
     Category addCategory(AddCategory addCategory);
     Category updateCategory(Long id,AddCategory addCategory);
 

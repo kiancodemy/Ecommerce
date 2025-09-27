@@ -1,8 +1,11 @@
 package com.ecommerce.main.service.product;
 import com.ecommerce.main.dto.addProductDto;
 import com.ecommerce.main.exception.errors.ProductNotFound;
+import com.ecommerce.main.model.Category;
 import com.ecommerce.main.model.Product;
+import com.ecommerce.main.repository.CategoryRepository;
 import com.ecommerce.main.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -10,12 +13,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class productServiceImpl implements productService {
     private final ProductRepository productRepository;
+    private  final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public Product createProduct(addProductDto addProductDto) {
         Product newProduct=new Product();
+        Category category = categoryRepository.findByName(addProductDto.category()).orElseGet(()->{Category category1=new Category();category1.setName(addProductDto.category());return categoryRepository.save(category1);});
         newProduct.setBrand(addProductDto.brand());
+        newProduct.setCategory(category);
         newProduct.setName(addProductDto.name());
+        newProduct.setPrice(addProductDto.price());
         newProduct.setDescription(addProductDto.description());
         newProduct.setInventory(addProductDto.inventory());
         return productRepository.save(newProduct);
@@ -53,9 +61,5 @@ public class productServiceImpl implements productService {
         return productRepository.findById(id).orElseThrow(()->new ProductNotFound("Username not found"));
     }
 
-    @Override
-    public Product getProductByName(String name) {
-        return productRepository.findByName(name).orElseThrow(()->new ProductNotFound("Username not found"));
-    }
 
 }
