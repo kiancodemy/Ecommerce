@@ -26,10 +26,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFound("categoryNotFo8nd"));
     }
 
-    @Override
-    public Category findByCategoryName(String categoryName) {
-        return categoryRepository.findByName(categoryName).orElseThrow(()->new CategoryNotFound("categoryNotFo8nd"));
-    }
 
     @Override
     public Category addCategory(AddCategory addCategory) {
@@ -42,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(Long id, AddCategory addCategory) {
+    public Category updateCategory(Long id,AddCategory addCategory) {
         Category category = findCategoryById(id);
         category.setName(addCategory.name());
         return categoryRepository.save(category);

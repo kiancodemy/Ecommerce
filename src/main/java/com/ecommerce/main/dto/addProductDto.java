@@ -20,4 +20,8 @@ public record addProductDto(
 
         @NotNull(message = "Inventory is required")
         @Min(value = 0, message = "Inventory cannot be negative")
-        Integer inventory) {}
+        Integer inventory,
+
+        @NotNull(message = "Category is required")
+        String category
+       ) {}
