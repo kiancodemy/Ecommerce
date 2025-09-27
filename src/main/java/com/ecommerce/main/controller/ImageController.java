@@ -4,6 +4,8 @@ import com.ecommerce.main.model.Image;
 import com.ecommerce.main.reposnse.ApiResponse;
 import com.ecommerce.main.service.image.imageServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,9 +33,11 @@ public class ImageController {
         imageServiceImpl.deleteById(imagesId);
         return ResponseEntity.ok(new ApiResponse("deleted successfully", null));
     }
-    @GetMapping("/getImageById/{imageId}")
-    public ResponseEntity<ApiResponse> getImageById(@PathVariable("imageId") Long ImageById) {
-        Image images = imageServiceImpl.getImageById(ImageById);
-        return ResponseEntity.ok(new ApiResponse("Fetched successfully", images));
-    }
-}
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> downloadImage(@PathVariable("id") Long id) {
+        Image image = imageServiceImpl.getImageById(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .body(image.getImage());
+}}

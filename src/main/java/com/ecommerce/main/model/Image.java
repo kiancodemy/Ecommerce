@@ -23,11 +23,13 @@ public class Image {
     @Column(nullable = false)
     private String fileType;
 
-    @Column(nullable = false)
+
     private String downloadedUrl;
 
+    @JsonIgnore
     @Lob
     @Column(nullable = false)
+
     private byte[] image;
 
     @ManyToOne

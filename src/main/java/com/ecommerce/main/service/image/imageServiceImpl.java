@@ -47,21 +47,28 @@ public class imageServiceImpl implements imageService {
 
 
     public List<ImageDto> createNewImages (List<MultipartFile> files,Product findProduct ){
-        String base_Url = "/api/images/download/";
+        String base_Url = "/image/download/";
         List<ImageDto> imageDto =new ArrayList<>();
         for (MultipartFile file : files) {
-            try {
-                Image img = new Image();
-                img.setName(file.getOriginalFilename());
-                img.setFileType(file.getContentType());
-                img.setImage(file.getBytes());
-                img.setProduct(findProduct);
-                Image saved = imageRepository.save(img);
-                String downloadUrl = base_Url + saved.getId();
-                saved.setDownloadedUrl(downloadUrl);
-                imageRepository.save(saved);
-                ImageDto newImage=new ImageDto(img.getId(),img.getName(),img.getDownloadedUrl());
-                imageDto.add(newImage);
+
+                long sizeInMB = file.getSize() / (1024 * 1024);
+
+                if (sizeInMB > 4) {
+                    throw new FileStorageException("File too large : " + file.getOriginalFilename());
+                }
+                try {
+
+                    Image img = new Image();
+                    img.setName(file.getOriginalFilename());
+                    img.setFileType(file.getContentType());
+                    img.setImage(file.getBytes());
+                    img.setProduct(findProduct);
+                    Image saved = imageRepository.save(img);
+                    String downloadUrl = base_Url + saved.getId();
+                    saved.setDownloadedUrl(downloadUrl);
+                    imageRepository.save(saved);
+                    ImageDto newImage=new ImageDto(saved.getId(),saved.getName(),saved.getDownloadedUrl());
+                    imageDto.add(newImage);
 
             } catch (IOException e ) {
                 throw new FileStorageException("Failed to store file: " + file.getOriginalFilename());
