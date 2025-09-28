@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
     //handle other Errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
-        ApiResponse response = new ApiResponse( "internal error", null);
+        ApiResponse response = new ApiResponse(ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
