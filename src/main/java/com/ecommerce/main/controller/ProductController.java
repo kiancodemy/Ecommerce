@@ -1,12 +1,10 @@
 package com.ecommerce.main.controller;
-import com.ecommerce.main.dto.ProductDto;
 import com.ecommerce.main.dto.addProductDto;
 import com.ecommerce.main.model.Product;
 import com.ecommerce.main.reposnse.ApiResponse;
 import com.ecommerce.main.service.product.productServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -16,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
     private final productServiceImpl productServiceImpl;
-    private final ModelMapper modelMapper;
 
 
     @PostMapping("/createProduct")
@@ -28,9 +25,7 @@ public class ProductController {
     @GetMapping("/allProducts")
     public ResponseEntity<ApiResponse> getAllProducts() {
         List<Product> all=productServiceImpl.getAllProducts();
-        List<ProductDto> allDto = all.stream().map(item -> modelMapper.map(item, ProductDto.class)).toList();
-
-        return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully",allDto));
+        return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully",all));
     }
 
 
@@ -43,15 +38,13 @@ public class ProductController {
     @GetMapping("/getById/{id}")
     public ResponseEntity<ApiResponse> getBuID(@PathVariable("id") Long id) {
         Product product = productServiceImpl.getProductById(id);
-        ProductDto productDto=modelMapper.map(product,ProductDto.class);
-        return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully", productDto));
+        return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully", product));
     }
 
     @PutMapping("/updateProduct/{id}")
     public ResponseEntity<ApiResponse> getByCategoryId(@PathVariable("id") Long id,  @Valid @RequestBody addProductDto addProductDto) {
         Product product = productServiceImpl.updateProduct(id, addProductDto);
-        ProductDto productDto=modelMapper.map(product,ProductDto.class);
-        return ResponseEntity.ok().body(new ApiResponse("updated sucessfully", productDto));
+        return ResponseEntity.ok().body(new ApiResponse("updated sucessfully", product));
     }
 
 

@@ -12,7 +12,7 @@ public interface imageService {
 
     Image getImageById(Long id);
     List<Image> getImagesByProductId(Long productId);
-    List<ImageDto> saveDImage(List<MultipartFile> files, Long productId);
+    List<ImageDto> saveImage(List<MultipartFile> files, Long productId);
 
 
 }

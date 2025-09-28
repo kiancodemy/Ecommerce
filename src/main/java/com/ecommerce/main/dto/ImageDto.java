@@ -1,17 +1,4 @@
 package com.ecommerce.main.dto;
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ImageDto {
-    private Long id;
-    private String name;
-    private String downloadedUrl;
-
-
+public record ImageDto(Long id, String name, String downloadedUrl) {
 }
