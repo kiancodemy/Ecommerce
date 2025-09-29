@@ -25,7 +25,6 @@ public class Image {
 
     private String downloadedUrl;
 
-    @JsonIgnore
     @Lob
     @Column(nullable = false)
 

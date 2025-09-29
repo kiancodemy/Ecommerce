@@ -4,6 +4,7 @@ import com.ecommerce.main.dto.CategoryDto;
 import com.ecommerce.main.model.Category;
 import com.ecommerce.main.reposnse.ApiResponse;
 import com.ecommerce.main.service.category.CategoryService;
+import com.ecommerce.main.service.category.CategoryServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/category")
 public class CategoryController {
-    private final CategoryService categoryService;
+    private final CategoryServiceImpl categoryService;
     private final ModelMapper modelMapper;
 
     @GetMapping("/allcategory")
