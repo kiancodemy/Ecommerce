@@ -1,10 +1,12 @@
 package com.ecommerce.main.controller;
 import com.ecommerce.main.dto.AddCategory;
+import com.ecommerce.main.dto.CategoryDto;
 import com.ecommerce.main.model.Category;
 import com.ecommerce.main.reposnse.ApiResponse;
 import com.ecommerce.main.service.category.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -14,11 +16,13 @@ import java.util.List;
 @RequestMapping("${api.prefix}/category")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/allcategory")
     public ResponseEntity<ApiResponse> getAllCategories() {
         List<Category> all=categoryService.allCategory();
-        return ResponseEntity.ok().body(new ApiResponse("success", all));
+        List<CategoryDto> allDto = all.stream().map(item -> modelMapper.map(item, CategoryDto.class)).toList();
+        return ResponseEntity.ok().body(new ApiResponse("success", allDto));
     }
 
     @DeleteMapping("/deletecategory/{id}")
@@ -30,18 +34,21 @@ public class CategoryController {
     @GetMapping("/getById/{id}")
     public ResponseEntity<ApiResponse> getCategoriesById(@PathVariable Long id) {
         Category category=categoryService.findCategoryById(id);
-        return ResponseEntity.ok().body(new ApiResponse("success", category));
+        CategoryDto categoryDto=modelMapper.map(category,CategoryDto.class);
+        return ResponseEntity.ok().body(new ApiResponse("success", categoryDto));
     }
     @PostMapping("/addCategory")
     public ResponseEntity<ApiResponse> addCategory(@Valid @RequestBody AddCategory addCategory) {
         Category category = categoryService.addCategory(addCategory);
-        return ResponseEntity.ok().body(new ApiResponse("success", category));
+        CategoryDto categoryDto=modelMapper.map(category,CategoryDto.class);
+        return ResponseEntity.ok().body(new ApiResponse("success",  categoryDto));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> addCategory(@PathVariable Long id,@Valid @RequestBody AddCategory addCategory) {
         Category category = categoryService.updateCategory(id, addCategory);
-        return ResponseEntity.ok().body(new ApiResponse("success", category));
+        CategoryDto categoryDto=modelMapper.map(category,CategoryDto.class);
+        return ResponseEntity.ok().body(new ApiResponse("success", categoryDto));
     }
 
 }

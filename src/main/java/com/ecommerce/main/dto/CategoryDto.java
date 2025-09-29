@@ -1,5 +1,4 @@
 package com.ecommerce.main.dto;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImageDto {
+public class CategoryDto {
+
     private Long id;
     private String name;
-    private String downloadedUrl;
-
 
 }

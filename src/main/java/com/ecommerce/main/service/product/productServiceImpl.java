@@ -4,16 +4,22 @@ import com.ecommerce.main.exception.errors.ProductNotFound;
 import com.ecommerce.main.model.Category;
 import com.ecommerce.main.model.Product;
 import com.ecommerce.main.repository.CategoryRepository;
+import com.ecommerce.main.repository.ImageRepository;
 import com.ecommerce.main.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+
 @Service
 @RequiredArgsConstructor
 public class productServiceImpl implements productService {
     private final ProductRepository productRepository;
     private  final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional
@@ -60,6 +66,4 @@ public class productServiceImpl implements productService {
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElseThrow(()->new ProductNotFound("Username not found"));
     }
-
-
 }
