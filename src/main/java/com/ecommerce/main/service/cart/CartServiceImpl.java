@@ -6,6 +6,7 @@ import com.ecommerce.main.model.Product;
 import com.ecommerce.main.repository.CartItemRepository;
 import com.ecommerce.main.repository.CartRepository;
 import com.ecommerce.main.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -14,7 +15,6 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
 
@@ -35,41 +35,67 @@ public class CartServiceImpl implements CartService {
     public void clearCart(Long cartId) {
         Cart find=getCart(cartId);
         find.getCartItems().clear();
+        BigDecimal total=getTotalPrice(find.getId());
+        find.setTotalPrice(total);
         cartRepository.save(find);
 
     }
 
     @Override
     public BigDecimal getTotalPrice(Long  cartId) {
-        Cart find=getCart(cartId);
+        Cart cart= cartRepository.findById(cartId).orElseThrow(()->new ProductNotFound("not found"));
 
-        return find.getCartItems().stream().map(item->item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return cart.getCartItems().stream().map(item->item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void addItemToCart(Long cartId, Long productId, int quantity) {
-        Cart find = getCart(cartId);
-        CartItem cartItems=find.getCartItems().stream().filter(item->item.getProduct().getId().equals(productId)).findFirst().orElse(null);
-        if(cartItems==null){
+    @Override
+    @Transactional
+    public Cart addItemToCart(Long cartId, Long productId, int quantity) {
+
+        Cart find;
+        if(cartId==null){
+            Cart newCart = new Cart();
+            newCart.setTotalPrice(BigDecimal.ZERO);
+            find = cartRepository.save(newCart);
+
+        }
+        else{
+            find=getCart(cartId);
+        }
+
+        CartItem existingItem=find.getCartItems().stream().filter(item->item.getProduct().getId().equals(productId)).findFirst().orElse(null);
+        if(existingItem==null){
             CartItem cartItem=new CartItem();
             cartItem.setQuantity(quantity);
             cartItem.setCart(find);
             Product product=productRepository.findById(productId).orElseThrow(()->new ProductNotFound("PRODUCT NOT FOUND !"));
             cartItem.setProduct(product);
-            cartItem.setUnitPrice(new BigDecimal(String.valueOf(product.getPrice())));
+            cartItem.setUnitPrice(product.getPrice());
+            cartItem.setTotalPrice();
+
             find.getCartItems().add(cartItem);
+
+
         }
         else {
-            cartItems.setQuantity(quantity);
+            existingItem.setQuantity(quantity);
+            existingItem.setTotalPrice();
         }
+
         find.setTotalPrice(getTotalPrice(find.getId()));
-        cartRepository.save(find);
+        return cartRepository.save(find);
+
     }
 
+    @Override
     public void removeItemFromCart(Long cartId, Long productId) {
-        Cart find = getCart(cartId);
-        CartItem cartItem=find.getCartItems().stream().filter(item->item.getProduct().getId().equals(productId)).findFirst().orElseThrow(()->new ProductNotFound("this card diesnont have this item !"));
-        find.getCartItems().remove(cartItem);
-        find.setTotalPrice(getTotalPrice(find.getId()));
-        cartRepository.save(find);
+        Cart cart = cartRepository.findById(cartId).orElseThrow(()->new ProductNotFound("CART NOT FOUND !"));
+        CartItem cartItem=cart.getCartItems().stream().filter(item -> item.getProduct().getId().equals(productId)).findFirst().orElseThrow(() -> new ProductNotFound("not found "));
+        cart.getCartItems().remove(cartItem);
+        BigDecimal total=getTotalPrice(cartId);
+        cart.setTotalPrice(total);
+        cartRepository.save(cart);
+
+
     }
 }

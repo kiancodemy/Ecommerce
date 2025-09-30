@@ -29,7 +29,6 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getAllProducts() {
         List<Product> all=productServiceImpl.getAllProducts();
         List<ProductDto> allDto = all.stream().map(item -> modelMapper.map(item, ProductDto.class)).toList();
-
         return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully",allDto));
     }
 
@@ -44,7 +43,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getBuID(@PathVariable("id") Long id) {
         Product product = productServiceImpl.getProductById(id);
         ProductDto productDto=modelMapper.map(product,ProductDto.class);
-        return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully", productDto));
+        return ResponseEntity.ok().body(new ApiResponse("fetched sucessfully",productDto));
     }
 
     @PutMapping("/updateProduct/{id}")

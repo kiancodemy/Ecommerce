@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.prefix}/image")
@@ -25,8 +26,9 @@ public class ImageController {
     @GetMapping("/getById/{productId}")
     public ResponseEntity<ApiResponse> getImagesByProductId(@PathVariable("productId") Long productId) {
         List<Image> images = imageServiceImpl.getImagesByProductId(productId);
-        List<ImageDto> imageDto=images.stream().map(item->modelMapper.map(item,ImageDto.class)).toList();
-        return ResponseEntity.ok(new ApiResponse("Fetched successfully", imageDto));
+        List<ImageDto> imageDto=images.stream().map(image->modelMapper.map(image,ImageDto.class)).collect(Collectors.toList());
+
+        return ResponseEntity.ok(new ApiResponse("Fetched successfully",imageDto));
     }
 
     @DeleteMapping("/DeleteById/{imagesId}")

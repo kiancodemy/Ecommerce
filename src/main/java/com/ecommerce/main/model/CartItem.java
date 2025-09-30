@@ -1,4 +1,5 @@
 package com.ecommerce.main.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,19 +16,22 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @Column(nullable = false)
     private int quantity;
+    @Column(nullable = false)
     private BigDecimal unitPrice;
+    @Column(nullable = false)
     private BigDecimal totalPrice;
 
     @ManyToOne
-    @JoinColumn(name = "product-id", referencedColumnName = "id")
+    @JoinColumn(name = "product-id", referencedColumnName = "id", nullable = false)
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "cart-id", referencedColumnName = "id", nullable = false)
     private Cart cart;
 
-    public void setTotalPrice(BigDecimal totalPrice) {
+    public void setTotalPrice() {
         this.totalPrice = unitPrice.multiply(new BigDecimal(quantity));
     }
 }

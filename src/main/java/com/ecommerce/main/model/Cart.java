@@ -18,7 +18,7 @@ public class Cart {
     private Long id;
     private BigDecimal totalPrice=BigDecimal.ZERO;
 
-    @OneToMany(mappedBy = "cart", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     Set<CartItem> cartItems = new HashSet<>();
 
 

@@ -3,7 +3,6 @@ import com.ecommerce.main.dto.AddCategory;
 import com.ecommerce.main.dto.CategoryDto;
 import com.ecommerce.main.model.Category;
 import com.ecommerce.main.reposnse.ApiResponse;
-import com.ecommerce.main.service.category.CategoryService;
 import com.ecommerce.main.service.category.CategoryServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,12 +35,14 @@ public class CategoryController {
     public ResponseEntity<ApiResponse> getCategoriesById(@PathVariable Long id) {
         Category category=categoryService.findCategoryById(id);
         CategoryDto categoryDto=modelMapper.map(category,CategoryDto.class);
+
         return ResponseEntity.ok().body(new ApiResponse("success", categoryDto));
     }
     @PostMapping("/addCategory")
     public ResponseEntity<ApiResponse> addCategory(@Valid @RequestBody AddCategory addCategory) {
         Category category = categoryService.addCategory(addCategory);
         CategoryDto categoryDto=modelMapper.map(category,CategoryDto.class);
+
         return ResponseEntity.ok().body(new ApiResponse("success",  categoryDto));
     }
 
